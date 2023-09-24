@@ -46,6 +46,8 @@ const account2 = {
 const accounts = [account1, account2];
 
 // Elements
+const btnScroll = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
 const labelBalance = document.querySelector('.balance__value');
@@ -70,6 +72,70 @@ const inputTransferAmount = document.querySelector('.form__input--amount');
 const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
+
+///////////////////////////////////////
+// Modal window
+
+const modal = document.querySelector('.modal');
+const overlay = document.querySelector('.overlay');
+const btnCloseModal = document.querySelector('.btn--close-modal');
+const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+
+const openModal = function (e) {
+  e.preventDefault();
+  modal.classList.remove('hidden');
+  overlay.classList.remove('hidden');
+};
+
+const closeModal = function () {
+  modal.classList.add('hidden');
+  overlay.classList.add('hidden');
+};
+
+btnsOpenModal.forEach(btn => btn.addEventListener('click', openModal));
+
+btnCloseModal.addEventListener('click', closeModal);
+overlay.addEventListener('click', closeModal);
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+    closeModal();
+  }
+});
+
+
+
+// Scrooll 
+btnScroll.addEventListener('click', function(e){
+  // const s1coords = section1.getBoundingClientRect();
+  // Take cordinates
+  
+  //Scrooling Old way
+  // window.scrollTo({
+  //   left: s1coords.left + window.pageXOffset,
+  //   top: s1coords.top + window.pageYOffset,
+  //   behavior: 'smooth'
+  // });
+  // Current position + current scroll
+
+   //Scrooling new way
+ section1.scrollIntoView({behavior: 'smooth'});
+});
+
+// Page navigation 
+// 1 Add event listener to common parent element
+// 2 Determine what element originated the event
+document.querySelector('.nav__links').addEventListener('click', function(e){
+  e.preventDefault();
+  // Matching strategy
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+     document.querySelector(id).scrollIntoView({behavior: 'smooth'});
+  }
+});
+
+
+//End modal window
 
 const formatMovementsDate = function (date, locale) {
   const calcPassDays = (date1, date2) =>
@@ -350,9 +416,9 @@ btnClose.addEventListener('click', function (e) {
   }
   inputCloseUsername.value = inputClosePin.value = '';
 
-     // Reset timer
-     clearInterval(timer);
-     timer = startLogoutTimer();
+  // Reset timer
+  clearInterval(timer);
+  timer = startLogoutTimer();
 });
 
 let sorted = false;
@@ -369,3 +435,4 @@ const currencies = new Map([
 ]);
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
