@@ -205,7 +205,7 @@ const navHeight = nav.getBoundingClientRect().height;
 
 const stickyNav = function(entries){
   const [entry] = entries;
-  console.log(entry);
+  // console.log(entry);
   if (!entry.isIntersecting) {
     nav.classList.add('sticky');
   }else{
@@ -221,6 +221,59 @@ const headerPbserver = new IntersectionObserver(stickyNav, {
 });
 
 headerPbserver.observe(header);
+
+// REVEAL SECTIONS
+
+const allSections = document.querySelectorAll('.section');
+
+const revealSection = function (entries, observer) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+
+  entry.target.classList.remove('section--hidden');
+  observer.unobserve(entry.target);
+  //To prevent to not repeat again and again
+};
+
+const sectionObserver = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.15,
+});
+
+allSections.forEach(function (section) {
+  sectionObserver.observe(section);
+  section.classList.add('section--hidden');
+});
+
+// LAZY LOADING
+const imageTargets = document.querySelectorAll('img[data-src]');
+
+const loadImg = function(entries, observer){
+   const [entry] = entries;
+  //  console.log(entry);
+
+  if(!entry.isIntersecting) return;
+
+  //Replace src with data-src
+  entry.target.src = entry.target.dataset.src;
+
+  //For fast performance
+  entry.target.addEventListener('load', function(){
+     entry.target.classList.remove('lazy-img');
+  });
+
+  // Stop observe
+  observer.unobserve(entry.target);
+};
+
+const imgageObserver = new IntersectionObserver(loadImg, {
+   root:null,
+   treshhold:0,
+   rootMargin: '200px',
+});
+
+imageTargets.forEach(img => imgageObserver.observe(img));
 
 //End modal window
 
