@@ -80,6 +80,10 @@ const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+const nav = document.querySelector('.nav');
 
 const openModal = function (e) {
   e.preventDefault();
@@ -103,13 +107,12 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-
-
-// Scrooll 
-btnScroll.addEventListener('click', function(e){
+////////////////////////////////////////////////////////////////
+// Scrooll
+btnScroll.addEventListener('click', function (e) {
   // const s1coords = section1.getBoundingClientRect();
   // Take cordinates
-  
+
   //Scrooling Old way
   // window.scrollTo({
   //   left: s1coords.left + window.pageXOffset,
@@ -118,22 +121,106 @@ btnScroll.addEventListener('click', function(e){
   // });
   // Current position + current scroll
 
-   //Scrooling new way
- section1.scrollIntoView({behavior: 'smooth'});
+  //Scrooling new way
+  section1.scrollIntoView({ behavior: 'smooth' });
 });
 
-// Page navigation 
+////////////////////////////////////////////////////////////////
+// Page navigation
 // 1 Add event listener to common parent element
 // 2 Determine what element originated the event
-document.querySelector('.nav__links').addEventListener('click', function(e){
+document.querySelector('.nav__links').addEventListener('click', function (e) {
   e.preventDefault();
   // Matching strategy
   if (e.target.classList.contains('nav__link')) {
     const id = e.target.getAttribute('href');
-     document.querySelector(id).scrollIntoView({behavior: 'smooth'});
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
   }
 });
 
+////////////////////////////////////////////////////////////////
+// Switch tab contents
+
+tabsContainer.addEventListener('click', function (e) {
+  const clicked = e.target.closest('.operations__tab');
+
+  // Guard clause
+  if (!clicked) return;
+
+  // Remove active classes
+  tabs.forEach(tab => tab.classList.remove('operations__tab--active'));
+  tabsContent.forEach(content => content.classList.remove('operations__content--active'));
+
+  // Activate tab
+  clicked.classList.add('operations__tab--active');
+
+  // Activate content area
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active');
+});
+
+// Menu fade animation
+const handleHover = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = this;
+                                          // Opacity
+    });
+    logo.style.opacity = this;
+                         //Opacity
+  }
+};
+// Copy functions
+nav.addEventListener('mouseover', handleHover.bind(0.5));
+nav.addEventListener('mouseout', handleHover.bind(1));
+
+// Sticky Navigation
+// const initialCordinates = section1.getBoundingClientRect();
+// window.addEventListener('scroll', function(e){
+//   if (this.window.scrollY > initialCordinates.top) nav.classList.add('sticky');
+//   else nav.classList.remove('sticky');
+// });
+////////////////////////////////////////////////////////////
+// const obsCallBack = function(entries, observer){
+//   entries.forEach(entry => {
+//      console.log(entry);
+//   });
+// };
+
+// const obsverOptions = {
+//   root: null,
+//   // treshhold: 0.1
+//   treshhold: [0, 0.2]
+// };
+
+// const observer = new IntersectionObserver(obsCallBack, obsverOptions);
+// observer.observe(section1);
+
+const header = document.querySelector('.header');
+const navHeight = nav.getBoundingClientRect().height;
+
+const stickyNav = function(entries){
+  const [entry] = entries;
+  console.log(entry);
+  if (!entry.isIntersecting) {
+    nav.classList.add('sticky');
+  }else{
+    nav.classList.remove('sticky');
+  }
+ 
+};
+
+const headerPbserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  treshhold: 0,
+  rootMargin: `-${navHeight}px`,
+});
+
+headerPbserver.observe(header);
 
 //End modal window
 
@@ -435,4 +522,3 @@ const currencies = new Map([
 ]);
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-
